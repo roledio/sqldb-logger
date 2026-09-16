@@ -30,6 +30,10 @@ type options struct {
 	preparerLevel      Level
 	queryerLevel       Level
 	execerLevel        Level
+	pingerLevel        Level
+	beginnerLevel      Level
+	committerLevel     Level
+	closerLevel        Level
 }
 
 // setDefaultOptions called first time before Log() called (see: OpenDriver()).
@@ -56,6 +60,10 @@ func setDefaultOptions(opt *options) {
 	opt.preparerLevel = LevelInfo
 	opt.queryerLevel = LevelInfo
 	opt.execerLevel = LevelInfo
+	opt.pingerLevel = LevelTrace
+	opt.beginnerLevel = LevelTrace
+	opt.committerLevel = LevelTrace
+	opt.closerLevel = LevelTrace
 }
 
 // DurationUnit is total time spent on an actual driver function call calculated by time.Since(start).
@@ -390,5 +398,41 @@ func WithQueryerLevel(lvl Level) Option {
 func WithExecerLevel(lvl Level) Option {
 	return func(opt *options) {
 		opt.execerLevel = lvl
+	}
+}
+
+// WithPingerLevel set default level of Ping() and Ping(Context) method calls.
+//
+// Default: LevelTrace
+func WithPingerLevel(lvl Level) Option {
+	return func(opt *options) {
+		opt.pingerLevel = lvl
+	}
+}
+
+// WithBeginnerLevel set default level of Begin() method calls.
+//
+// Default: LevelTrace
+func WithBeginnerLevel(lvl Level) Option {
+	return func(opt *options) {
+		opt.beginnerLevel = lvl
+	}
+}
+
+// WithCommitterLevel set default level of Commit() and Rollback() method calls.
+//
+// Default: LevelTrace
+func WithCommitterLevel(lvl Level) Option {
+	return func(opt *options) {
+		opt.committerLevel = lvl
+	}
+}
+
+// WithCloserLevel set default level of Close() method calls.
+//
+// Default: LevelTrace
+func WithCloserLevel(lvl Level) Option {
+	return func(opt *options) {
+		opt.closerLevel = lvl
 	}
 }

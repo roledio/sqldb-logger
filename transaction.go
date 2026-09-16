@@ -15,7 +15,7 @@ type transaction struct {
 
 // Commit implement driver.Tx
 func (tx *transaction) Commit() error {
-	lvl, start := LevelDebug, time.Now()
+	lvl, start := tx.logger.opt.committerLevel, time.Now()
 	err := tx.Tx.Commit()
 
 	if err != nil {
@@ -29,7 +29,7 @@ func (tx *transaction) Commit() error {
 
 // Rollback implement driver.Tx
 func (tx *transaction) Rollback() error {
-	lvl, start := LevelDebug, time.Now()
+	lvl, start := tx.logger.opt.committerLevel, time.Now()
 	err := tx.Tx.Rollback()
 
 	if err != nil {

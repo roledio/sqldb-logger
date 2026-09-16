@@ -25,7 +25,7 @@ type connection struct {
 
 // Begin implements driver.Conn
 func (c *connection) Begin() (driver.Tx, error) {
-	lvl, start, id := LevelDebug, time.Now(), c.logger.opt.uidGenerator.UniqueID()
+	lvl, start, id := c.logger.opt.beginnerLevel, time.Now(), c.logger.opt.uidGenerator.UniqueID()
 	logs := append(c.logData(), c.logger.withUID(c.logger.opt.txIDFieldname, id))
 	connTx, err := c.Conn.Begin() // nolint // disable static check on deprecated driver method
 
@@ -55,7 +55,7 @@ func (c *connection) Prepare(query string) (driver.Stmt, error) {
 
 // Prepare implements driver.Conn
 func (c *connection) Close() error {
-	lvl, start := LevelDebug, time.Now()
+	lvl, start := c.logger.opt.closerLevel, time.Now()
 	err := c.Conn.Close()
 
 	if err != nil {
@@ -74,7 +74,7 @@ func (c *connection) BeginTx(ctx context.Context, opts driver.TxOptions) (driver
 		return nil, driver.ErrSkip
 	}
 
-	lvl, start, id := LevelDebug, time.Now(), c.logger.opt.uidGenerator.UniqueID()
+	lvl, start, id := c.logger.opt.beginnerLevel, time.Now(), c.logger.opt.uidGenerator.UniqueID()
 	logs := append(c.logData(), c.logger.withUID(c.logger.opt.txIDFieldname, id))
 	connTx, err := drvTx.BeginTx(ctx, opts)
 
@@ -114,7 +114,7 @@ func (c *connection) Ping(ctx context.Context) error {
 		return driver.ErrSkip
 	}
 
-	lvl, start := LevelDebug, time.Now()
+	lvl, start := c.logger.opt.pingerLevel, time.Now()
 	err := driverPinger.Ping(ctx)
 
 	if err != nil {
